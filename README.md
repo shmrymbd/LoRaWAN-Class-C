@@ -1,4 +1,4 @@
-# LoRaWAN-Class-C-
+# LoRaWAN-Class-C
 Library and codes for nodes implementing LoRaWAN Class C
 
 The library Arduino-MyLoRaID.zip in this repository is based on work from : https://github.com/antaresdocumentation/lorawan-loraid
