@@ -10,7 +10,7 @@ Dragino LoRa Shield : https://wzper.my/index.php?id_product=90&controller=produc
 Relay Shield V3.0 : https://my.cytron.io/p-relay-shield-v3.0?r=1
 
 As i am interested to work on Class C in order to control actuator or Relay using LoRaWAN, we will focus only on Class C here. \
-For normal Class A, you can refer to my other repository meant for lmic-as923.
+For normal Class A, you can refer to my other repository : https://github.com/zakibakar75/arduino-lmic-as923.
 
 This library is not based on lmic by the way.  It was originally written by Ideetron BV. It works pretty good.   
 The only feature is missing is ADR functionality.  But it is just fine to make your node works.
