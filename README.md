@@ -2,7 +2,7 @@
 
 Please refer to Library_README.md for the library usage
 
-The library is based-off work from : https://github.com/antaresdocumentation/lorawan-loraid
+The library is based-off work from : https://github.com/antaresdocumentation/lorawan-loraid \
 I modified bits and pieces in the library to suit Malaysia AS1 frequencies as well as some minor changes at some of the places.
 
 I ran the code on Arduino UNO + Dragino LoRa Shield + Relay Shield V3.0.
@@ -19,7 +19,7 @@ The only feature is missing is ADR functionality. But it is just fine to make yo
 As TTN is currently does not support Class C yet, i am using Gotthardp LoRaWAN Server for my work - https://github.com/gotthardp/lorawan-server \
 I installed the lorawan server on my Raspberry Pi 3B+. It works pretty good.
 
-In my setup, i am using Dragino LG308 Multi-Channel Gateway which talks to the lorawan server to get the data processed. \
+In my setup, i am using Dragino LG308 Multi-Channel Gateway which talks to the lorawan server to get the data processed. 
 
 LoRaWAN Gateway : https://wzper.my/index.php?id_product=105&controller=product
 
