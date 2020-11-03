@@ -6,7 +6,7 @@ I modified bits and pieces in the library to suit Malaysia AS1 frequencies as we
 
 I ran the code on Arduino UNO + Dragino LoRa Shield + Relay Shield V3.0. 
 
-Dragino LoRa Shield : https://wzper.my/index.php?id_product=90&controller=product
+Dragino LoRa Shield : https://wzper.my/index.php?id_product=90&controller=product/
 Relay Shield V3.0 : https://my.cytron.io/p-relay-shield-v3.0?r=1
 
 As i am interested to work on Class C in order to control actuator or Relay using LoRaWAN, we will focus only on Class C here.  
