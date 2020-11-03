@@ -1,36 +1,289 @@
-# LoRaWAN-Class-C
-Library and codes for nodes implementing LoRaWAN Class C
+Arduino LoRa.id SDK
+====================
+This repository contains the simple LoRaWAN library originally created by Ideetron B.V. This library is slightly
+modified and encapsulated to run in the generic platform, allowing using the SX1272, SX1276 tranceivers and compatible modules (such as some HopeRF RFM9x modules).
 
-The library "Arduino-MyLoRaID.zip" in this repository, is based-off work from : https://github.com/antaresdocumentation/lorawan-loraid \
-I modified bits and pieces in the library to suit Malaysia AS1 frequencies as well as some minor changes at some of the places.
+To find out how to use the library itself, see the examples, or see the PDF file in the doc subdirectory.
 
-I ran the code on Arduino UNO + Dragino LoRa Shield + Relay Shield V3.0. 
+Installing
+----------
+To install this library:
 
-Dragino LoRa Shield : https://wzper.my/index.php?id_product=90&controller=product \
-Relay Shield V3.0 : https://my.cytron.io/p-relay-shield-v3.0?r=1
+ - install it using the Arduino Library manager ("Sketch" -> "Include
+   Library" -> "Manage Libraries..."), or
+ - download a zipfile from github using the "Download ZIP" button and
+   install it using the IDE ("Sketch" -> "Include Library" -> "Add .ZIP
+   Library..."
+ - clone this git repository into your sketchbook/libraries folder.
 
-As i am interested to work on Class C in order to control actuator or Relay using LoRaWAN, we will focus only on Class C here. \
-For normal Class A, you can refer to my other repository : https://github.com/zakibakar75/arduino-lmic-as923.
+For more info, see https://www.arduino.cc/en/Guide/Libraries
 
-This library is not based on lmic by the way.  It was originally written by Ideetron BV. It works pretty good.   
-The only feature is missing is ADR functionality.  But it is just fine to make your node works.
+Features
+--------
+The LoRa.id SDK library supports LoRaWAN Class A and Class C implementations operating in EU-868 and AS-923 bands. Note that this library is fairly simple with the aim of demonstrating the LoRa.id capabilities.
 
-As TTN is currently does not support Class C yet, i am using Gotthardp LoRaWAN Server for my work - https://github.com/gotthardp/lorawan-server \
-I installed the lorawan server on my Raspberry Pi 3B+.  It works pretty good.
+Configuration
+-------------
+A number of features can be configured or disabled by editing the
+`config.h` file in the library folder. Unfortunately the Arduino
+environment does not offer any way to do this (compile-time)
+configuration from the sketch, so be careful to recheck your
+configuration when you switch between sketches or update the library.
 
-In my setup, i am using Dragino LG308 Multi-Channel Gateway which talks to the lorawan server to get the data processed.
+At the very least, you should set the right type of board in config.h, most other values should be fine at their defaults.
 
-LoRaWAN Gateway : https://wzper.my/index.php?id_product=105&controller=product
+Supported hardware
+------------------
+This library is intended to be used with plain LoRa transceivers,
+connecting to them using SPI. In particular, the SX1272 and SX1276
+families are supported (which should include SX1273, SX1277, SX1278 and
+SX1279 which only differ in the available frequencies, bandwidths and
+spreading factors). It has been tested with both SX1272 and SX1276
+chips, using the Semtech SX1272 evaluation board and the HopeRF RFM92
+and RFM95 boards (which supposedly contain an SX1272 and SX1276 chip
+respectively).
 
-In the same Raspberry Pi, i also installed Mosquitto MQTT broker.   
-Then, i connect the lorawan server with the MQTT broker at the "connector" section of the lorawan server.
+Some of the supported pre-built board currently available in the market are:
+- Cytron Shield LoRa-RFM (https://www.cytron.io/p-shield-lora-rfm)
+- Dragino (http://www.dragino.com/products/module/item/102-lora-shield.html)
 
-To receive and send data from/to the node, i am using Node-Red on my personal computer. \
-Incoming data from node can be seen on Node-Red. \
-We can also control the Relay from within the Node-Red flow.
+This library has been tested using:
+- Arduino Uno
+- WeMos D1 R2 (ESP8266 family board)
 
-Some settings on the Lorawan server must be done in order to make things work perfectly. \
-Here, you can find the screenshot of my setting. \
-Also, the flow for my Node-Red for your convenience.
+Connections
+-----------
+To make this library work, your Arduino (or whatever Arduino-compatible
+board you are using) should be connected to the transceiver. The exact
+connections are a bit dependent on the transceiver board and Arduino
+used, so this section tries to explain what each connection is for and
+in what cases it is (not) required.
+
+### DIO pins
+The DIO (digitial I/O) pins on the transceiver board can be configured
+for various functions. You need to specify the transceiver board in `config.h`. You can also specify custom DIO pins depending on your board.
+
+```c
+// Board definition, uncomment your board
+// #define BOARD_DRAGINO_SHIELD
+// #define BOARD_CYTRON_SHIELD
+#define CUSTOM_BOARD
+
+// Your custom pins
+#ifdef CUSTOM_BOARD
+    #define DIO0    2
+    #define DIO1    6
+    #define DIO5    8
+    #define DIO2    7
+    #define CS      10
+    #define RFM_RST 9        
+#endif
+```
+API
+--------
+This library provides a high-level API for connecting the device to Antares server.
+
+#### LoRa module initialization
+Initialize LoRa/LoRaWAN module. Must be called once in the Arduino setup block.
+
+##### Syntax
+```c
+  void init(void);
+```
+
+##### Example
+```c
+void setup() {
+  // Setup loraid access
+  lora.init();
+  ...
+}
+```
+
+#### Setup Authentication Keys
+Setup authentication keys provisioned by LoRaWAN server, including device address.
+
+##### Syntax
+```c
+void setNwkAccessKey(unsigned char *accessKey_in);
+void setAppAccessKey(unsigned char *accessKey_in);
+```
+
+##### Example
+```c
+void setup() {
+  // Setup loraid access
+  lora.init();
+  ...
+
+  // Put Nwtwork and App Access Key here
+  lora.setNwkAccessKey("F56B4BBA9BA6F3F7497376FD889D6B0C");
+  lora.setAppAccessKey("A57DC52E1DA163D5F9C4AD6B048E9610");
+
+  ...
+
+}
+```
+
+#### Setup Device ID for Authentication
+Setup device ID for activating the device.
+
+##### Syntax
+```c
+void setDeviceId(unsigned char *devAddr_in);
+```
+
+##### Example
+```c
+void setup() {
+  // Setup loraid access
+  lora.init();
+  ...
+
+  // Put DevAddress here
+  lora.setDeviceId("260119E7");
+  ...
+
+}
+```
+
+#### Set Device Class
+Set class of the device (Class A or Class C). Input as `CLASS_A` or `CLASS_C` enum.
+##### Syntax
+```c
+void setDeviceClass(devclass_t dev_class);
+```
+
+##### Example
+```c
+void setup() {
+  // Setup loraid access
+  lora.init();
+  ...
+
+  // Set LoRaWAN Class
+  lora.setDeviceClass(CLASS_C);
+  ...
+}
+
+```
+
+#### Set Data Rate
+You can set data rate allowed in your region (AS_923 or EU_868).
+
+| data_rate | Name | Config          | Definition |
+|-----------|------|-----------------|------------|
+| 0         | DR0  | SF12 BW 125 KHz | SF12				|
+| 1         | DR1  | SF11 BW 125 KHz | SF11				|
+| 2         | DR2  | SF10 BW 125 KHz | SF10				|
+| 3         | DR3  | SF9 BW 125 KHz  | SF9				|
+| 4         | DR4  | SF8 BW 125 KHz  | SF8				|
+| 5         | DR5  | SF7 BW 125 KHz  | SF7				|
+| 6         | DR6  | SF7 BW 250 KHz  | SF7_250		|
+
+##### Syntax
+```c
+void setDataRate(unsigned char data_rate);
+```
+
+##### Example
+```c
+void setup() {
+  // Setup loraid access
+  lora.init();
+  ...
+
+  // Set Data Rate to SF10 BW 125 KHz
+  lora.setDataRate(2);
+  // or
+  lora.setDataRate(SF10);
+}
+
+```
+
+#### Send data to LoRaWAN Server through LoRaWAN Gateway
+You can use string or char for sending your data to LoRaWAN Server. If you use char, you need to specify the length of data you want to send
+You need to specify the message type (unconfirmed or confirmed message). Set `confirm = 0` to send unconfirmed message and `confirm = 1`' to send confirmed message.
+#### Syntax
+```c
+void sendToGateway(String data, unsigned char confirm);
+// OR
+void sendToGateway(unsigned char *data, unsigned int len, unsigned char confirm);
+```        
+
+##### Example
+```c
+void loop() {
+  // put your main code here, to run repeatedly:
+  char myStr[] = "Hello World";  
+  lora.sendToGateway(myStr, strlen(myStr), 0);
+  ...
+  // or
+  String myStr = "Hello World";
+  lora.sendToGateway(myStr, 0);
+  ...
+}
+```
 
 
+#### Update and run LoRa FSM
+Update and run the LoRa Finite State Machine (FSM). This line should be put inside the Arduino `loop` block.
+##### Syntax
+```c
+void update(void);
+```
+
+##### Example
+```c
+void loop() {
+  ...
+
+  // Check Lora RX
+  lora.update();
+}
+
+```
+
+#### Check and retrieve incoming data
+Check for the latest incoming data from server either in binary or string format. You need to provide char buffer to read the data.
+##### Syntax
+```c
+void readData(void);
+```
+
+##### Example
+```c
+
+char buffer_rx[255];
+
+void setup() {
+  ...
+}
+
+void loop() {
+  int recvStatus;
+  ...
+
+  // LoRa FSM
+  lora.update();
+
+  // Check data
+  recvStatus = lora.readData(buffer_rx);
+  if(recvStatus) {
+    Serial.println(buffer_rx);
+  }
+}
+```
+
+Examples
+--------
+This library currently provides one example for Class C:
+
+ - `loraid-send-class-C.ino` shows basic usage of Class C lora.id SDK.
+
+License
+-------
+Most source files in this repository are made available under the
+MIT License. The examples which use a more liberal
+license. Some of the AES code is available under the LGPL. Refer to each
+individual source file for more details.
