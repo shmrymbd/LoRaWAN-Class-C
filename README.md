@@ -2,7 +2,7 @@
 Library and codes for nodes implementing LoRaWAN Class C
 
 The library Arduino-MyLoRaID.zip in this repository is based on work from : https://github.com/antaresdocumentation/lorawan-loraid
-I modified bits and pieces in the library to suit Malaysia AS1 frequencies as well as some minor changes at some of the places.
+I modified bits and pieces in the library to suit Malaysia AS1 frequencies as well as some minor changes at some of the places./
 
 I ran the code on Arduino UNO + Dragino LoRa Shield + Relay Shield V3.0. 
 
